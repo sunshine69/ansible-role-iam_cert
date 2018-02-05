@@ -12,8 +12,8 @@ Requirements
 Role Variables
 --------------
 
-`certs` - optional - default: []
- List of certs as a dict to create/delete
+`iam_certs` - optional - default: []
+ List of certs as a dict to create/delete.
 `stage` - optional - default: 'create' 
  action to do
 `upload_iam_cert_role_arn` - optional - no default

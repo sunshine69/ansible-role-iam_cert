@@ -28,4 +28,4 @@
     key: "{{ lookup('file', item.key_file_path) }}"
     cert_chain: "{{ lookup('file', item.cert_chain_file_path) }}"
     state: "{{ 'present' if stage == 'create' else 'absent' }}"
-  with_items: "{{ certs|default([]) }}"
+  with_items: "{{ iam_certs|default([]) }}"
