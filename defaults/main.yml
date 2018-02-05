@@ -1,0 +1,4 @@
+---
+# defaults file for iam_cert
+stage: create
+certs: []

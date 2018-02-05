@@ -1,0 +1,31 @@
+- block:
+    - include_role:
+       name: aws_profile_account
+      vars:
+        aws_profile_account_role_arn: "{{ upload_iam_cert_role_arn|default(omit) }}"
+        aws_profile_account_role_session_name: 'role: iam_cert - Upload cert'
+        aws_profile_account_region: "{{ region }}"
+
+    - name: set credentials fact
+      set_fact:
+        sts_creds: "{{ (sts_result|default({})).sts_creds|default({}) }}"
+      no_log: yes
+  when: profile is not defined or not profile
+
+- name: Upload iam cert to aws
+  iam_cert:
+    profile: "{{ profile|default(omit) }}"
+    aws_access_key: "{{ (sts_creds|default({})).access_key|default(omit) }}"
+    aws_secret_key: "{{ (sts_creds|default({})).secret_key|default(omit) }}"
+    security_token: "{{ (sts_creds|default({})).session_token|default(omit) }}"
+    region: "{{ region|default(omit) }}"
+    dup_ok: "{{ item.dup_ok|default(omit) }}"
+    new_name: "{{ item.new_name|default(omit) }}"
+    new_path: "{{ item.new_path|default(omit) }}"
+    path: "{{ item.path|default(omit) }}"
+    name: "{{ item.name }}"
+    cert: "{{ lookup('file', item.cert_file_path) }}"
+    key: "{{ lookup('file', item.key_file_path) }}"
+    cert_chain: "{{ lookup('file', item.cert_chain_file_path) }}"
+    state: "{{ 'present' if stage == 'create' else 'absent' }}"
+  with_items: "{{ certs|default([]) }}"
